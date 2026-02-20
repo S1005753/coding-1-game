@@ -18,9 +18,15 @@ Game Rules:
 - Bonus: Scoreboard for lowest time.
 
 Major Game Elements:
+- Game map is 30x16 (Subject to Change).
+- You are the Knight.
+- Knight size is 1x1.
 - Goal is to save to the Princess.
-- Dragon will constantly chase you.
+- Princess is 1x1.
+- Dragon will constantly chase you, when the Knight (you) moves.
+- Dragon will be 2x2
 - Cobblestone walls as obsticles.
+- Walls/Obstacles will be 1x1.
 
 Gameplay Process:
 - Start by planning
