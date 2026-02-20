@@ -11,8 +11,11 @@ Game Idea:
 
 Game Rules:
 - Using WASD to move the Knight.
+- Time increases very time you move.
+- Goal is to have the lowest time possible to save princess.
 - Goal is to save to the Princess.
 - Dragon will constantly chase you.
+- Bonus: Scoreboard for lowest time.
 
 Major Game Elements:
 - Goal is to save to the Princess.
