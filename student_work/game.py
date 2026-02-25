@@ -1,28 +1,28 @@
 # Write your game here
-    import curses
+import curses
 
 game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
 
-    "width": 20,
+    "width": 50,
     "height": 10,
-    "player": {"x": 0, "y": 0, "score": 0, "health": 100},
-    "dragon_pos": {"x": 20, "y": 5},
+    "player": {"x": 0, "y": 2, "score": 0, "health": 100},
+    "dragon_pos": {"x": 40, "y": 3},
     "princess": [
-        {"x": 15, "y": 2, "collected": False},
+        {"x": 30, "y": 3, "collected": False},
     ],
-    "obstacles:" [
-        {"x": 4, "y": 5},
-        {"x": 5, "y": 6},
-        {"x": 6, "y": 7}
+    "obstacles": [
+        {"x": 11, "y": 1}, 
+        {"x": 12, "y": 2}, 
+        {"x": 15, "y": 3}
     ],
 
     # Sticker Icons
-    "Knight": "\U+1F482",
-    "Dragon": "\U+1F432",
-    "Wall": "\U+1F6A7",
-    "Princess": "\U+1F478",
-    "empty": " "
+    "knight": "\U0001F3C7",
+    "dragon": "\U0001F409",
+    "wall": "\U0001F9F1",
+    "princess_icon": "\U0001F478",
+    "empty": " ",
 }
 
 def draw_board(screen):
@@ -46,7 +46,7 @@ def draw_board(screen):
                 row += game_data["wall"]
              # Princess
             elif any(c['x'] == x and c['y'] == y and not c["collected"] for c in game_data["princess"]):
-                row += game_data["Princess"]
+                row += game_data["princess_icon"]
             else:
                 row += game_data["empty"]
         screen.addstr(y, 0, row, curses.color_pair(1))
