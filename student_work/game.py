@@ -55,6 +55,13 @@ def draw_board(screen):
             else:
                 row += game_data["empty"]
         screen.addstr(y, 0, row, curses.color_pair(1))
+    screen.addstr(game_data['height'] + 1, 0,
+                  f"Moves Taken: {game_data['player']['score']}",
+                  curses.color_pair(1))
+    screen.addstr(game_data['height'] + 2, 0,
+                  "Move with W/A/S/D, Q to quit",
+                  curses.color_pair(1))
+    screen.refresh()
 
     screen.refresh()
     screen.getkey()  # pause so player can see board
