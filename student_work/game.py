@@ -1,4 +1,4 @@
-# Write your game here
+#Write your game here
 import curses
 
 game_data = {
@@ -30,13 +30,13 @@ game_data = {
     "empty": " ",
 }
 
-def draw_board(screen):
+def draw_board(stdscr):
     curses.start_color()
     curses.use_default_colors()
     curses.init_pair(1, curses.COLOR_WHITE, -1)
     # Print the board and all game elements using curses
 
-    screen.clear()
+    stdscr.clear()
     for y in range(game_data["height"]):
         row = ""
         for x in range(game_data["width"]):
@@ -54,16 +54,45 @@ def draw_board(screen):
                 row += game_data["princess_icon"]
             else:
                 row += game_data["empty"]
-        screen.addstr(y, 0, row, curses.color_pair(1))
-    screen.addstr(game_data['height'] + 1, 0,
+        stdscr.addstr(y, 0, row, curses.color_pair(1))
+    stdscr.addstr(game_data['height'] + 1, 0,
                   f"Moves Taken: {game_data['player']['score']}",
                   curses.color_pair(1))
-    screen.addstr(game_data['height'] + 2, 0,
+    stdscr.addstr(game_data['height'] + 2, 0,
                   "Move with W/A/S/D, Q to quit",
                   curses.color_pair(1))
-    screen.refresh()
+    stdscr.refresh()
+def move_player(key):
+    x  = game_data["player"]["x"]
+    y = game_data["player"]["y"]
 
-    screen.refresh()
-    screen.getkey()  # pause so player can see board
+    new_x, new_y = x, y
+    key = key.lower()
 
-curses.wrapper(draw_board)
+    if key == "w":
+        new_y -= 1
+    elif key == "s":
+        new_y += 1
+    elif key == "a":
+        new_x -= 1
+    elif key == "d":
+        new_x += 1
+    else:
+        return  # Invalid key
+    if any(o['x'] == new_x and o['y'] == new_y for o in game_data["obstacles"]):
+        return
+
+    game_data["player"]["x"] = new_x
+    game_data["player"]["y"] = new_y
+    game_data["player"]["score"] += 1
+def main(stdscr):
+    curses.curs_set(0)  # Hide cursor
+    draw_board(stdscr)
+
+    while True:
+        key = stdscr.getkey()
+        if key.lower() == "q":
+            break
+        move_player(key)
+        draw_board(stdscr)
+curses.wrapper(main)
