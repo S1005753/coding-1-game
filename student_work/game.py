@@ -9,17 +9,17 @@ game_data = {
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
     "dragon_pos": {"x": 40, "y": 3},
     "princess": [
-        {"x": 30, "y": 3, "collected": False},
+        {"x": 29, "y": 3, "collected": False},
     ],
     "obstacles": [
         {"x": 11, "y": 1}, 
         {"x": 12, "y": 2}, 
         {"x": 15, "y": 3},
         {"x": 39, "y": 1},
-        {"x": 38, "y": 2},
-        {"x": 38, "y": 3},
-        {"x": 40, "y": 4},
-        {"x": 40, "y": 5}
+        {"x": 39, "y": 2},
+        {"x": 39, "y": 3},
+        {"x": 39, "y": 4},
+        {"x": 39, "y": 5}
     ],
 
     # Sticker Icons
@@ -27,7 +27,7 @@ game_data = {
     "dragon": "\U0001F409",
     "wall": "\U0001F9F1",
     "princess_icon": "\U0001F478",
-    "empty": " ",
+    "empty": "\U00002B1B",
 }
 
 def draw_board(stdscr):
