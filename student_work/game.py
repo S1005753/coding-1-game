@@ -63,24 +63,22 @@ def draw_board(stdscr):
                   curses.color_pair(1))
     stdscr.refresh()
 def move_player(key):
-    x  = game_data["player"]["x"]
-    y = game_data["player"]["y"]
+    x = game_data['player']['x']
+    y = game_data['player']['y']
 
     new_x, new_y = x, y
     key = key.lower()
 
-    if key == "w":
+    if key == "w" and y > 0:
         new_y -= 1
-    elif key == "s":
+    elif key == "s" and y < game_data['height'] - 1:
         new_y += 1
-    elif key == "a":
+    elif key == "a" and x > 0:
         new_x -= 1
-    elif key == "d":
+    elif key == "d" and x < game_data['width'] - 1:
         new_x += 1
     else:
-        return  # Invalid key
-    if any(o['x'] == new_x and o['y'] == new_y for o in game_data["obstacles"]):
-        return
+        return  # Invalid key or move off board
 
     game_data["player"]["x"] = new_x
     game_data["player"]["y"] = new_y
