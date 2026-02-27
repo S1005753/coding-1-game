@@ -36,28 +36,28 @@ game_data = {
 def draw_board(stdscr):
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_WHITE, -1)
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    #curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK) #Test for later
+    
     # Print the board and all game elements using curses
 
     stdscr.clear()
     for y in range(game_data["height"]):
-        row = ""
         for x in range(game_data["width"]):
             # Player
             if x == game_data["player"]["x"] and y == game_data["player"]["y"]:
-                row += game_data["knight"]
+                stdscr.addstr(y, x, game_data["knight"], curses.color_pair(1))
              # Dragon
             elif x == game_data["dragon_pos"]['x'] and y == game_data["dragon_pos"]['y']:
-                row += game_data["dragon"]
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))
               # Obstacles
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
-                row += game_data["wall"]
+                stdscr.addstr(y, x, game_data["wall"], curses.color_pair(2))
              # Princess
             elif any(c['x'] == x and c['y'] == y and not c["collected"] for c in game_data["princess"]):
-                row += game_data["princess_icon"]
+                stdscr.addstr(y, x, game_data["princess_icon"], curses.color_pair(1))
             else:
-                row += game_data["empty"]
-        stdscr.addstr(y, 0, row, curses.color_pair(1))
+                stdscr.addstr(y, x, game_data["empty"], curses.color_pair(1))
     stdscr.addstr(game_data['height'] + 1, 0,
                   f"Moves Taken: {game_data['player']['score']}",
                   curses.color_pair(1))
@@ -81,7 +81,7 @@ def move_player(key):
     elif key == "d" and x < game_data['width'] - 1:
         new_x += 1
     else:
-        return  # Invalid key or move off board
+        return  
 
     if any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
         return
@@ -90,7 +90,7 @@ def move_player(key):
     game_data["player"]["y"] = new_y
     game_data["player"]["score"] += 1
 def main(stdscr):
-    curses.curs_set(0)  # Hide cursor
+    curses.curs_set(0)  
     draw_board(stdscr)
 
     while True:
