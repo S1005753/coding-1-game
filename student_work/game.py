@@ -7,19 +7,22 @@ game_data = {
     "width": 50,
     "height": 10,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
-    "dragon_pos": {"x": 40, "y": 3},
+    "dragon_pos": {"x": 40, "y": 4},
     "princess": [
         {"x": 29, "y": 3, "collected": False},
     ],
     "obstacles": [
         {"x": 11, "y": 1}, 
         {"x": 12, "y": 2}, 
-        {"x": 15, "y": 3},
+        {"x": 13, "y": 3},
         {"x": 39, "y": 1},
         {"x": 39, "y": 2},
         {"x": 39, "y": 3},
         {"x": 39, "y": 4},
-        {"x": 39, "y": 5}
+        {"x": 39, "y": 5},
+        {"x": 39, "y": 6},
+        {"x": 39, "y": 7},
+        {"x": 39, "y": 8}
     ],
 
     # Sticker Icons
