@@ -18,14 +18,14 @@ game_data = {
     "knight": "\U0001F3C7",
     "dragon": "\U0001F409",
     "wall": "\U0001F9F1",
-    "candle": "\U0001F56F",
     "princess_icon": "\U0001F478",
-    "empty": "\U00002B1B", 
+    "empty": "\U00002B1B",
     "candles": [], #For storing decorative candles as a list of {"x": int, "y": int} dictionaries
+    # Use a single-width glyph for rendering in curses to avoid shifting the grid
     "candle": "\U0001F56F",
 }
 
-# build a simple border-and-bar maze after the data structure is created
+# builds a simple border-and-bar maze after the data structure is created
 for i in range(game_data["width"]):
     # top and bottom borders
     game_data["obstacles"].append({"x": i, "y": 0})
@@ -123,22 +123,37 @@ if valid_approaches:
 
 # place several decorative candles in random dungeon-appropriate empty spots
 def _place_decorative_candles(count=6):
+    """Place `count` candles on empty tiles adjacent to obstacles.
+    This avoids changing or removing any obstacles; candles are purely decorative.
+    """
     width = game_data["width"]
     height = game_data["height"]
+    # reset candles (idempotent if called multiple times)
+    game_data['candles'] = []
+
     occupied = {(o['x'], o['y']) for o in game_data['obstacles']}
     occupied.add((game_data['player']['x'], game_data['player']['y']))
     occupied.add((game_data['dragon_pos']['x'], game_data['dragon_pos']['y']))
     for p in game_data['princess']:
         occupied.add((p['x'], p['y']))
-#Where a candle can appear
-    candidates = [
-        (x, y)
-        for x in range(1, width - 1)
-        for y in range(1, height - 1)
-        if (x, y) not in occupied
-    ]
-    random.shuffle(candidates) #Chooses random positions for the candles
-    for x, y in candidates[:count]:
+
+    # Candidate tiles are empty tiles that are adjacent (4-neighbor) to at least
+    # one obstacle — this feels dungeon-like (candles near walls).
+    candidates = []
+    for x in range(1, width - 1):
+        for y in range(1, height - 1):
+            if (x, y) in occupied:
+                continue
+            neighbors = [(x-1,y), (x+1,y), (x,y-1), (x,y+1)]
+            if any(n in {(o['x'], o['y']) for o in game_data['obstacles']} for n in neighbors):
+                candidates.append((x, y))
+
+    if not candidates:
+        return
+
+    n = min(count, len(candidates))
+    chosen = random.sample(candidates, n)
+    for x, y in chosen:
         game_data['candles'].append({"x": x, "y": y})
 
 _place_decorative_candles(count=6) #Places 6 candles in the game board
@@ -162,24 +177,42 @@ def draw_board(stdscr):
     stdscr.clear()
     for y in range(game_data["height"]):
         for x in range(game_data["width"]):
-            # Player
+            # draw each logical tile at screen column sx = x*2 so every tile
+            # occupies two fixed columns — this prevents emoji double-width
+            # glyphs from shifting subsequent tiles.
+            sx = x * 2
+
+            # choose glyph and color for this tile
             if x == game_data["player"]["x"] and y == game_data["player"]["y"]:
-                # use color pair 3 to highlight knight's space with yellow background
-                stdscr.addstr(y, x, game_data["knight"], curses.color_pair(3))
-             # Dragon
+                glyph = game_data["knight"]
+                color = curses.color_pair(3)
             elif x == game_data["dragon_pos"]['x'] and y == game_data["dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))
-              # Obstacles
+                glyph = game_data["dragon"]
+                color = curses.color_pair(5)
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
-                stdscr.addstr(y, x, game_data["wall"], curses.color_pair(2))
-            # Princess
+                glyph = game_data["wall"]
+                color = curses.color_pair(2)
             elif any(c['x'] == x and c['y'] == y and not c["collected"] for c in game_data["princess"]):
-                stdscr.addstr(y, x, game_data["princess_icon"], curses.color_pair(4))
-            # Candle
+                glyph = game_data["princess_icon"]
+                color = curses.color_pair(4)
             elif any(ca['x'] == x and ca['y'] == y for ca in game_data.get('candles', [])):
-                stdscr.addstr(y, x, game_data["candle"], curses.color_pair(3))
+                glyph = game_data["candle"]
+                color = curses.color_pair(3)
             else:
-                stdscr.addstr(y, x, game_data["empty"], curses.color_pair(1))
+                glyph = game_data["empty"]
+                color = curses.color_pair(1)
+
+            # Draw a two-column colored background first, then overlay the
+            # glyph. This ensures emoji (which occupy two columns) have the
+            # same background color on both columns instead of leaving an awkward uncolored space on the second column.
+            try:
+                stdscr.addstr(y, sx, '  ', color)
+            except Exception:
+                # fallback: if drawing two spaces fails (very narrow terminal),
+                # draw a single space
+                stdscr.addstr(y, sx, ' ', color)
+            # now overlay the glyph at the same position
+            stdscr.addstr(y, sx, glyph, color)
     stdscr.addstr(game_data['height'] + 1, 0,
                   f"Moves Taken: {game_data['player']['score']}",
                   curses.color_pair(1))
