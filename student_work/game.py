@@ -1,5 +1,6 @@
 #Write your game here
 import curses
+import random
 
 game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
@@ -7,31 +8,146 @@ game_data = {
     "width": 50,
     "height": 10,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
-    "dragon_pos": {"x": 40, "y": 4},
+    "dragon_pos": {"x": 27, "y": 5},
     "princess": [
-        {"x": 29, "y": 3, "collected": False},
+        {"x": 46, "y": 5, "collected": False},
     ],
-    "obstacles": [
-        {"x": 11, "y": 1}, 
-        {"x": 12, "y": 2}, 
-        {"x": 13, "y": 3},
-        {"x": 39, "y": 1},
-        {"x": 39, "y": 2},
-        {"x": 39, "y": 3},
-        {"x": 39, "y": 4},
-        {"x": 39, "y": 5},
-        {"x": 39, "y": 6},
-        {"x": 39, "y": 7},
-        {"x": 39, "y": 8}
-    ],
+    "obstacles": [],
 
     # Sticker Icons
     "knight": "\U0001F3C7",
     "dragon": "\U0001F409",
     "wall": "\U0001F9F1",
+    "candle": "\U0001F56F",
     "princess_icon": "\U0001F478",
-    "empty": "\U00002B1B",
+    "empty": "\U00002B1B", 
+    "candles": [],
+    "candle": "\U0001F56F",
 }
+
+# build a simple border-and-bar maze after the data structure is created
+for i in range(game_data["width"]):
+    # top and bottom borders
+    game_data["obstacles"].append({"x": i, "y": 0})
+    game_data["obstacles"].append({"x": i, "y": game_data["height"] - 1})
+
+for j in range(game_data["height"]):
+    # left border except the player's starting spot
+    if not (j == game_data["player"]["y"] and 0 == game_data["player"]["x"]):
+        game_data["obstacles"].append({"x": 0, "y": j})
+    # right border
+    game_data["obstacles"].append({"x": game_data["width"] - 1, "y": j})
+
+# simpler interior layout: two vertical walls with staggered double-spacing gaps
+# and one horizontal corridor with wider openings for easier passage
+for x in (15, 30):
+    for y in range(1, game_data["height"] - 1):
+        # leave a gap two rows tall every 4 rows so the openings are two spaces high
+        if (y // 2) % 2 == 0:
+            continue
+        game_data["obstacles"].append({"x": x, "y": y})
+
+# one horizontal band across the middle with double-wide openings, including princess spot
+row = game_data["height"] // 2
+# define ranges where space should exist rather than single points
+horizontal_gaps = [(5,7), (25,27), (game_data["princess"][0]["x"]-1, game_data["princess"][0]["x"]+1), (45,47)]
+for x in range(1, game_data["width"] - 1):
+    open_space = False
+    for start, end in horizontal_gaps:
+        if start <= x <= end:
+            open_space = True
+            break
+    if open_space:
+        continue
+    game_data["obstacles"].append({"x": x, "y": row})
+
+# add a few interior pillar blocks to give a dungeon feel
+for px in (8, 22, 37):
+    for py in (2, 6):
+        game_data["obstacles"].append({"x": px, "y": py})
+        game_data["obstacles"].append({"x": px+1, "y": py})
+
+# Create a decorative room around the princess that is wide and
+# accessible from all sides. This is purely for aesthetics: we clear a
+# larger area, then add a thin perimeter but leave openings on each side
+# and ensure approach tiles are clear so all paths can reach her.
+px = game_data["princess"][0]["x"]
+py = game_data["princess"][0]["y"]
+
+# desired half-dimensions for the room (wider than before)
+room_half_w = 3  # room width = 1 + 2*half_w (7 tiles)
+room_half_h = 2  # room height = 1 + 2*half_h (5 tiles)
+
+room_x0 = max(1, px - room_half_w)
+room_x1 = min(game_data["width"] - 2, px + room_half_w)
+room_y0 = max(1, py - room_half_h)
+room_y1 = min(game_data["height"] - 2, py + room_half_h)
+
+# clear any obstacles inside the whole room area
+game_data["obstacles"] = [
+    o for o in game_data["obstacles"]
+    if not (room_x0 <= o["x"] <= room_x1 and room_y0 <= o["y"] <= room_y1)
+]
+
+# perimeter openings: center of each side
+openings = {
+    (room_x0, py),  # left
+    (room_x1, py),  # right
+    (px, room_y0),  # top
+    (px, room_y1),  # bottom
+}
+
+# add thin perimeter walls but skip opening tiles
+for x in range(room_x0, room_x1 + 1):
+    for y in (room_y0, room_y1):
+        if (x, y) in openings:
+            continue
+        game_data["obstacles"].append({"x": x, "y": y})
+for y in range(room_y0, room_y1 + 1):
+    for x in (room_x0, room_x1):
+        if (x, y) in openings:
+            continue
+        game_data["obstacles"].append({"x": x, "y": y})
+
+# ensure approach tiles just outside each opening are clear so connected
+approach_positions = [
+    (room_x0 - 1, py),
+    (room_x1 + 1, py),
+    (px, room_y0 - 1),
+    (px, room_y1 + 1),
+]
+valid_approaches = [
+    (ax, ay) for ax, ay in approach_positions
+    if 1 <= ax <= game_data["width"] - 2 and 1 <= ay <= game_data["height"] - 2
+]
+if valid_approaches:
+    game_data["obstacles"] = [
+        o for o in game_data["obstacles"]
+        if (o["x"], o["y"]) not in valid_approaches
+    ]
+
+# place several decorative candles in random dungeon-appropriate empty spots
+def _place_decorative_candles(count=6):
+    width = game_data["width"]
+    height = game_data["height"]
+    occupied = {(o['x'], o['y']) for o in game_data['obstacles']}
+    occupied.add((game_data['player']['x'], game_data['player']['y']))
+    occupied.add((game_data['dragon_pos']['x'], game_data['dragon_pos']['y']))
+    for p in game_data['princess']:
+        occupied.add((p['x'], p['y']))
+
+    candidates = [
+        (x, y)
+        for x in range(1, width - 1)
+        for y in range(1, height - 1)
+        if (x, y) not in occupied
+    ]
+    random.shuffle(candidates)
+    for x, y in candidates[:count]:
+        game_data['candles'].append({"x": x, "y": y})
+
+_place_decorative_candles(count=6)
+
 
 def draw_board(stdscr):
     curses.start_color()
@@ -42,9 +158,9 @@ def draw_board(stdscr):
     # color pair 3 for knight background yellow (foreground black)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_YELLOW)
     # color pair 4 for princess - yellow background, white foreground
-    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_YELLOW)
     # color pair 5 for dragon - red foreground on black
-    curses.init_pair(5, curses.COLOR_RED, curses.COLOR_RED)
+    curses.init_pair(5, curses.COLOR_RED, curses.COLOR_BLACK)
     
     # Print the board and all game elements using curses
 
@@ -61,9 +177,12 @@ def draw_board(stdscr):
               # Obstacles
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
                 stdscr.addstr(y, x, game_data["wall"], curses.color_pair(2))
-             # Princess
+            # Princess
             elif any(c['x'] == x and c['y'] == y and not c["collected"] for c in game_data["princess"]):
                 stdscr.addstr(y, x, game_data["princess_icon"], curses.color_pair(4))
+            # Candle (decorative, no collision) - render with knight's yellow background
+            elif any(ca['x'] == x and ca['y'] == y for ca in game_data.get('candles', [])):
+                stdscr.addstr(y, x, game_data["candle"], curses.color_pair(3))
             else:
                 stdscr.addstr(y, x, game_data["empty"], curses.color_pair(1))
     stdscr.addstr(game_data['height'] + 1, 0,
