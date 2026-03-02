@@ -31,25 +31,25 @@ for i in range(game_data["width"]):
     game_data["obstacles"].append({"x": i, "y": 0})
     game_data["obstacles"].append({"x": i, "y": game_data["height"] - 1})
 
-for j in range(game_data["height"]): #J = imaginary unit
+for i in range(game_data["height"]): 
     # left border except the player's starting spot
-    if not (j == game_data["player"]["y"] and 0 == game_data["player"]["x"]):
-        game_data["obstacles"].append({"x": 0, "y": j})
+    if not (i == game_data["player"]["y"] and 0 == game_data["player"]["x"]):
+        game_data["obstacles"].append({"x": 0, "y": i})
     # right border
-    game_data["obstacles"].append({"x": game_data["width"] - 1, "y": j})
+    game_data["obstacles"].append({"x": game_data["width"] - 1, "y": i}) #This creates the right border wall by adding obstacles at x = width - 1 for all y values
 
-#Adding obstacles in vertical ways with gaps to create a maze-like structure
-for x in (15, 30):
-    for y in range(1, game_data["height"] - 1):
+#Adding obstacles in vertical ways with gaps
+for x in (15, 30): #This removes the brick where the player is at the start
+    for y in range(2, game_data["height"]):
         if (y // 2) % 2 == 0:
             continue
         game_data["obstacles"].append({"x": x, "y": y})
 
-#Horizontal obstaclses
+#Horizontal obstacles
 row = game_data["height"] // 2
 # define ranges where space should exist rather than single points
-horizontal_gaps = [(5,7), (25,27), (game_data["princess"][0]["x"]-1, game_data["princess"][0]["x"]+1), (45,47)]
-for x in range(1, game_data["width"] - 1):
+horizontal_gaps = [(5,7), (25,27), (game_data["princess"][0]["x"]-1, game_data["princess"][0]["x"]+1), (45,47)] #Changing the values determines how long the horizontal bars are
+for x in range(1, game_data["width"]):
     open_space = False
     for start, end in horizontal_gaps:
         if start <= x <= end:
@@ -61,7 +61,7 @@ for x in range(1, game_data["width"] - 1):
 
 # Vertical obstacles
 for px in (8, 22, 37):
-    for py in (2, 6):
+    for py in (2, 7):
         game_data["obstacles"].append({"x": px, "y": py})
         game_data["obstacles"].append({"x": px+1, "y": py})
 
@@ -93,7 +93,7 @@ openings = {
 }
 
 # add thin perimeter walls but skip opening tiles
-for x in range(room_x0, room_x1 + 1):
+for x in range(room_x0, room_x1 + 1): 
     for y in (room_y0, room_y1):
         if (x, y) in openings:
             continue
