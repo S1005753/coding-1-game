@@ -1,6 +1,7 @@
 #Write your game here
 import curses
 import random
+import time
 
 game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
@@ -20,8 +21,6 @@ game_data = {
     "wall": "\U0001F9F1",
     "princess_icon": "\U0001F478",
     "empty": "\U00002B1B",
-    "candles": [], #For storing decorative candles as a list of {"x": int, "y": int} dictionaries
-    # Use a single-width glyph for rendering in curses to avoid shifting the grid
     "candle": "\U0001F56F",
 }
 
@@ -122,10 +121,7 @@ if valid_approaches:
     ]
 
 # place several decorative candles in random dungeon-appropriate empty spots
-def _place_decorative_candles(count=6):
-    """Place `count` candles on empty tiles adjacent to obstacles.
-    This avoids changing or removing any obstacles; candles are purely decorative.
-    """
+def place_decorative_candles(count=6):
     width = game_data["width"]
     height = game_data["height"]
     # reset candles (idempotent if called multiple times)
@@ -156,7 +152,7 @@ def _place_decorative_candles(count=6):
     for x, y in chosen:
         game_data['candles'].append({"x": x, "y": y})
 
-_place_decorative_candles(count=6) #Places 6 candles in the game board
+place_decorative_candles(count=6) #Places 6 candles in the game board
 
 
 def draw_board(stdscr):
@@ -220,6 +216,7 @@ def draw_board(stdscr):
                   "Move with W/A/S/D, Q to quit",
                   curses.color_pair(1))
     stdscr.refresh()
+    
 def move_player(key):
     x = game_data['player']['x']
     y = game_data['player']['y']
@@ -240,10 +237,39 @@ def move_player(key):
 
     if any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
         return
-    
     game_data["player"]["x"] = new_x
     game_data["player"]["y"] = new_y
     game_data["player"]["score"] += 1
+
+
+
+def move_dragon():
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    #Gets current dragon and player coordinates
+    ex, ey = game_data['dragon_pos']['x'], game_data['dragon_pos']['y']
+    px, py = game_data['player']['x'], game_data['player']['y']
+
+    #Sorts directions: moves that decrease distance to player come first
+    directions.sort(key=lambda d: abs((ex + d[0]) - px) + abs((ey + d[1]) - py))
+
+    if random.random() < 0.20:
+        random.shuffle(directions)
+
+    for dx, dy in directions:
+        new_x = ex + dx
+        new_y = ey + dy
+        
+        # Boundary check
+        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
+            # Obstacle check
+            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
+                game_data['dragon_pos']['x'] = new_x
+                game_data['dragon_pos']['y'] = new_y
+                break
+
+
+
 def main(stdscr):
     curses.curs_set(0)  
     draw_board(stdscr)
@@ -253,5 +279,8 @@ def main(stdscr):
         if key.lower() == "q":
             break
         move_player(key)
+        move_dragon()
+
         draw_board(stdscr)
+
 curses.wrapper(main)
