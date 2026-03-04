@@ -1,6 +1,7 @@
 #Write your game here
 import curses
 import time
+import random
 
 game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
@@ -87,6 +88,32 @@ def move_player(key):
     if any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
         return
     
+def move_dragon():
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    
+    #Gets current dragon and player coordinates
+    ex, ey = game_data['dragon_pos']['x'], game_data['dragon_pos']['y']
+    px, py = game_data['player']['x'], game_data['player']['y']
+
+    #Sorts directions: moves that decrease distance to player come first
+    directions.sort(key=lambda d: abs((ex + d[0]) - px) + abs((ey + d[1]) - py))
+
+    if random.random() < 0.20:
+        random.shuffle(directions)
+
+    for dx, dy in directions:
+        new_x = ex + dx
+        new_y = ey + dy
+        
+        # Boundary check
+        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
+            # Obstacle check
+            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
+                game_data['dragon_pos']['x'] = new_x
+                game_data['dragon_pos']['y'] = new_y
+                break
+
+
     game_data["player"]["x"] = new_x
     game_data["player"]["y"] = new_y
     game_data["player"]["score"] += 1
