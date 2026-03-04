@@ -72,6 +72,13 @@ def draw_board(stdscr):
     curses.start_color()
     curses.use_default_colors()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    # color pair 3 for knight background yellow (foreground black)
+    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_BLUE)
+    # color pair 4 for princess - yellow background, white foreground
+    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+    # color pair 5 for dragon - red foreground on black
+    curses.init_pair(5, curses.COLOR_RED, curses.COLOR_RED)
     #curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK) #Test for later
     
     # Print the board and all game elements using curses
@@ -81,22 +88,23 @@ def draw_board(stdscr):
         for x in range(game_data["width"]):
             # Player
             if x == game_data["player"]["x"] and y == game_data["player"]["y"]:
-                stdscr.addstr(y, x, game_data["knight"], curses.color_pair(1))
+                stdscr.addstr(y, x, game_data["knight"], curses.color_pair(3))
+             # Dragon
              # Dragon
             elif x == game_data["dragon_pos"]['x'] and y == game_data["dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))  
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))  
             # Dragon2
             elif x == game_data["2dragon_pos"]['x'] and y == game_data["2dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))           
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))           
              # Dragon3
             elif x == game_data["3dragon_pos"]['x'] and y == game_data["3dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))
               # Obstacles
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
                 stdscr.addstr(y, x, game_data["wall"], curses.color_pair(2))
              # Princess
             elif any(c['x'] == x and c['y'] == y and not c["collected"] for c in game_data["princess"]):
-                stdscr.addstr(y, x, game_data["princess_icon"], curses.color_pair(1))
+                stdscr.addstr(y, x, game_data["princess_icon"], curses.color_pair(4))
             else:
                 stdscr.addstr(y, x, game_data["empty"], curses.color_pair(1))
     stdscr.addstr(game_data['height'] + 1, 0,
