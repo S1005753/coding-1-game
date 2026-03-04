@@ -9,22 +9,50 @@ game_data = {
     "width": 50,
     "height": 10,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
-    "dragon_pos": {"x": 40, "y": 4},
+    "dragon_pos": {"x": 43, "y": 3},    
+    "2dragon_pos": {"x": 7, "y": 2},    
+    "3dragon_pos": {"x": 20, "y": 7},
+
+
     "princess": [
-        {"x": 29, "y": 3, "collected": False},
+        {"x": 47, "y": 3, "collected": False},
     ],
     "obstacles": [
-        {"x": 11, "y": 1}, 
-        {"x": 12, "y": 2}, 
-        {"x": 13, "y": 3},
-        {"x": 39, "y": 1},
-        {"x": 39, "y": 2},
-        {"x": 39, "y": 3},
-        {"x": 39, "y": 4},
+        {"x": 0, "y": 5},
+        {"x": 1, "y": 5},
+        {"x": 2, "y": 5},
+        {"x": 3, "y": 5},
+        {"x": 4, "y": 5}, 
+        {"x": 5, "y": 5}, 
+        {"x": 6, "y": 5},
+        {"x": 7, "y": 5},
+        {"x": 8, "y": 5},
+        {"x": 12, "y": 5},
+        {"x": 13, "y": 5},
+        {"x": 14, "y": 5},
+        {"x": 15, "y": 5},
+        {"x": 16, "y": 5},
+        {"x": 17, "y": 5},
+        {"x": 18, "y": 5},
+        {"x": 19, "y": 5},
+        {"x": 20, "y": 5},
+        {"x": 21, "y": 5},
+        {"x": 22, "y": 5},
+        {"x": 23, "y": 5},
+        {"x": 24, "y": 5},
+        {"x": 28, "y": 5},
+        {"x": 29, "y": 5},
+        {"x": 30, "y": 5},
+        {"x": 31, "y": 5},
+        {"x": 32, "y": 5},
+        {"x": 33, "y": 5},
+        {"x": 34, "y": 5},
+        {"x": 35, "y": 5},
+        {"x": 36, "y": 5},
+        {"x": 37, "y": 5},
+        {"x": 38, "y": 5},
         {"x": 39, "y": 5},
-        {"x": 39, "y": 6},
-        {"x": 39, "y": 7},
-        {"x": 39, "y": 8}
+        {"x": 40, "y": 5}
     ],
 
     # Sticker Icons
@@ -51,6 +79,12 @@ def draw_board(stdscr):
                 stdscr.addstr(y, x, game_data["knight"], curses.color_pair(1))
              # Dragon
             elif x == game_data["dragon_pos"]['x'] and y == game_data["dragon_pos"]['y']:
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))  
+            # Dragon2
+            elif x == game_data["2dragon_pos"]['x'] and y == game_data["2dragon_pos"]['y']:
+                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))           
+             # Dragon3
+            elif x == game_data["3dragon_pos"]['x'] and y == game_data["3dragon_pos"]['y']:
                 stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(1))
               # Obstacles
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
@@ -106,6 +140,33 @@ def move_dragon():
                 game_data['dragon_pos']['y'] = new_y
                 break
 
+def move_dragon2():
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    random.shuffle(directions)
+    ex, ey = game_data['2dragon_pos']['x'], game_data['2dragon_pos']['y']
+
+    for dx, dy in directions:
+        new_x = ex + dx
+        new_y = ey + dy
+        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
+            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
+                game_data['2dragon_pos']['x'] = new_x
+                game_data['2dragon_pos']['y'] = new_y
+                break
+def move_dragon3():
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    random.shuffle(directions)
+    ex, ey = game_data['3dragon_pos']['x'], game_data['3dragon_pos']['y']
+
+    for dx, dy in directions:
+        new_x = ex + dx
+        new_y = ey + dy
+        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
+            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
+                game_data['3dragon_pos']['x'] = new_x
+                game_data['3dragon_pos']['y'] = new_y
+                break
+
 
 def main(stdscr):
     curses.curs_set(0)  
@@ -117,6 +178,8 @@ def main(stdscr):
             break
         move_player(key)
         move_dragon ()
+        move_dragon2()
+        move_dragon3()
         draw_board(stdscr)
 
 curses.wrapper(main)
