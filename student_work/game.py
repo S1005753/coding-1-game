@@ -6,7 +6,7 @@ import random
 game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
 
-    "width": 50,
+    "width": 49,
     "height": 10,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
     "dragon_pos": {"x": 43, "y": 3},    
@@ -27,7 +27,7 @@ game_data = {
         {"x": 6, "y": 5},
         {"x": 7, "y": 5},
         {"x": 8, "y": 5},
-        {"x": 12, "y": 5},
+        {"x": 9, "y": 5},
         {"x": 13, "y": 5},
         {"x": 14, "y": 5},
         {"x": 15, "y": 5},
@@ -38,8 +38,8 @@ game_data = {
         {"x": 20, "y": 5},
         {"x": 21, "y": 5},
         {"x": 22, "y": 5},
-        {"x": 23, "y": 5},
-        {"x": 24, "y": 5},
+        {"x": 26, "y": 5},
+        {"x": 27, "y": 5},
         {"x": 28, "y": 5},
         {"x": 29, "y": 5},
         {"x": 30, "y": 5},
@@ -48,11 +48,16 @@ game_data = {
         {"x": 33, "y": 5},
         {"x": 34, "y": 5},
         {"x": 35, "y": 5},
-        {"x": 36, "y": 5},
-        {"x": 37, "y": 5},
-        {"x": 38, "y": 5},
         {"x": 39, "y": 5},
-        {"x": 40, "y": 5}
+        {"x": 40, "y": 5},
+        {"x": 41, "y": 5},
+        {"x": 42, "y": 5},
+        {"x": 43, "y": 5},
+        {"x": 44, "y": 5},
+        {"x": 45, "y": 5},
+        {"x": 46, "y": 5},
+        {"x": 47, "y": 5},
+        {"x": 48, "y": 5},
     ],
 
     # Sticker Icons
@@ -139,7 +144,6 @@ def move_dragon():
                 game_data['dragon_pos']['x'] = new_x
                 game_data['dragon_pos']['y'] = new_y
                 break
-
 def move_dragon2():
     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     random.shuffle(directions)
