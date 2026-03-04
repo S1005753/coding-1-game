@@ -109,15 +109,12 @@ game_data = {
 def draw_board(stdscr):
     curses.start_color()
     curses.use_default_colors()
-    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     # color pair 3 for knight background yellow (foreground black)
-    curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_BLUE)
+    curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLUE)
     # color pair 4 for princess - yellow background, white foreground
-    curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+    curses.init_pair(4, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
     # color pair 5 for dragon - red foreground on black
     curses.init_pair(5, curses.COLOR_RED, curses.COLOR_RED)
-    #curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK) #Test for later
     
     # Print the board and all game elements using curses
 
@@ -150,10 +147,10 @@ def draw_board(stdscr):
                 stdscr.addstr(y, x, game_data["empty"], curses.color_pair(1))
     stdscr.addstr(game_data['height'] + 1, 0,
                   f"Moves Taken: {game_data['player']['score']}",
-                  curses.color_pair(1))
+                  curses.color_pair(0))
     stdscr.addstr(game_data['height'] + 2, 0,
                   "Move with W/A/S/D, Q to quit",
-                  curses.color_pair(1))
+                  curses.color_pair(0))
     stdscr.refresh()
 def move_player(key):
     x = game_data['player']['x']
