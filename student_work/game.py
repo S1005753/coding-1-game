@@ -7,18 +7,19 @@ game_data = {
     # Store board dimensions, player/enemy positions, score, energy, collectibles, and icons
 
     "width": 49,
-    "height": 10,
+    "height": 11,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
-    "dragon_pos": {"x": 43, "y": 3},    
+    "dragon_pos": {"x": 43, "y": 8},    
     "2dragon_pos": {"x": 7, "y": 2},    
-    "3dragon_pos": {"x": 20, "y": 7},
+    "3dragon_pos": {"x": 20, "y": 8},
     "4dragon_pos": {"x": 30, "y": 1},
 
 
     "princess": [
-        {"x": 47, "y": 3, "collected": False},
+        {"x": 47, "y": 8, "collected": False},
     ],
     "obstacles": [
+        #Horizontal Wall
         {"x": 0, "y": 5},
         {"x": 1, "y": 5},
         {"x": 2, "y": 5},
@@ -59,7 +60,43 @@ game_data = {
         {"x": 46, "y": 5},
         {"x": 47, "y": 5},
         {"x": 48, "y": 5},
-    ],
+        #Vertical Walls
+        {"x": 9, "y": 6},
+        {"x": 9, "y": 7},
+        {"x": 9, "y": 8},
+        {"x": 9, "y": 9},
+        {"x": 9, "y": 10},
+
+        {"x": 13, "y": 4}, 
+        {"x": 13, "y": 3},
+        {"x": 13, "y": 2},
+        {"x": 13, "y": 1},
+        {"x": 13, "y": 0},
+
+        {"x": 22, "y": 4}, 
+        {"x": 22, "y": 3},
+        {"x": 22, "y": 2},
+        {"x": 22, "y": 1},
+        {"x": 22, "y": 0},
+
+        {"x": 26, "y": 6}, 
+        {"x": 26, "y": 7},
+        {"x": 26, "y": 8},
+        {"x": 26, "y": 9},
+        {"x": 26, "y": 10},
+
+        {"x": 35, "y": 6}, 
+        {"x": 35, "y": 7},
+        {"x": 35, "y": 8},
+        {"x": 35, "y": 9},
+        {"x": 35, "y": 10},
+
+        {"x": 39, "y": 4}, 
+        {"x": 39, "y": 3},
+        {"x": 39, "y": 2},
+        {"x": 39, "y": 1},
+        {"x": 39, "y": 0},
+],
 
     # Sticker Icons
     "knight": "\U0001F3C7",
