@@ -131,18 +131,8 @@ def draw_board(stdscr):
             # Player
             if x == game_data["player"]["x"] and y == game_data["player"]["y"]:
                 stdscr.addstr(y, x, game_data["knight"], curses.color_pair(3))
-             # Dragon
-             # Dragon
-            elif x == game_data["dragon_pos"]['x'] and y == game_data["dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))  
-            # Dragon2
-            elif x == game_data["2dragon_pos"]['x'] and y == game_data["2dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))           
-             # Dragon3
-            elif x == game_data["3dragon_pos"]['x'] and y == game_data["3dragon_pos"]['y']:
-                stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))
-                #Dragon4
-            elif x == game_data["4dragon_pos"]['x'] and y == game_data["4dragon_pos"]['y']:
+            # Dragons
+            elif any(d['x'] == x and d['y'] == y for d in game_data["dragons"]):
                 stdscr.addstr(y, x, game_data["dragon"], curses.color_pair(5))
               # Obstacles
             elif any(o['x'] == x and o['y'] == y for o in game_data["obstacles"]):
@@ -186,59 +176,20 @@ def move_player(key):
 
 def move_dragons():
     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    random.shuffle(directions)
-    ex, ey = game_data['dragon_pos']['x'], game_data['dragon_pos']['y']
+    for dragon in game_data['dragons']:
+        random.shuffle(directions)
+        ex, ey = dragon['x'], dragon['y']
+        for dx, dy in directions:
+            new_x = ex + dx
+            new_y = ey + dy
+            if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
+                if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
+                    dragon['x'] = new_x
+                    dragon['y'] = new_y
+                    break
 
-    for dx, dy in directions:
-        new_x = ex + dx
-        new_y = ey + dy
-        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
-            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
-                game_data['dragon_pos']['x'] = new_x
-                game_data['dragon_pos']['y'] = new_y
-                break
-def move_dragon2():
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    random.shuffle(directions)
-    ex, ey = game_data['2dragon_pos']['x'], game_data['2dragon_pos']['y']
-
-    for dx, dy in directions:
-        new_x = ex + dx
-        new_y = ey + dy
-        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
-            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
-                game_data['2dragon_pos']['x'] = new_x
-                game_data['2dragon_pos']['y'] = new_y
-                break
-def move_dragon3():
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    random.shuffle(directions)
-    ex, ey = game_data['3dragon_pos']['x'], game_data['3dragon_pos']['y']
-
-    for dx, dy in directions:
-        new_x = ex + dx
-        new_y = ey + dy
-        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
-            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
-                game_data['3dragon_pos']['x'] = new_x
-                game_data['3dragon_pos']['y'] = new_y
-                break
-def move_dragon4():
-    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
-    random.shuffle(directions)
-    ex, ey = game_data['4dragon_pos']['x'], game_data['4dragon_pos']['y']
-
-    for dx, dy in directions:
-        new_x = ex + dx
-        new_y = ey + dy
-        if 0 <= new_x < game_data['width'] and 0 <= new_y < game_data['height']:
-            if not any(o['x'] == new_x and o['y'] == new_y for o in game_data['obstacles']):
-                game_data['4dragon_pos']['x'] = new_x
-                game_data['4dragon_pos']['y'] = new_y
-                break
-
-#display_welcome_screen()
-#time.sleep(0.0)
+display_welcome_screen()
+time.sleep(0.0)
 
 def main(stdscr):
     curses.curs_set(0)  
@@ -249,21 +200,17 @@ def main(stdscr):
         if key.lower() == "q":
             break
         move_player(key)
-        move_dragon ()
-        move_dragon2()
-        move_dragon3()
-        move_dragon4()
+        move_dragons()
         draw_board(stdscr)
-        if (game_data['player']["x"] == game_data['dragon_pos']["x"] and
-            game_data['player']["y"] == game_data['dragon_pos']["y"]):
-             break
+        if any(game_data['player']["x"] == d["x"] and game_data['player']["y"] == d["y"] for d in game_data['dragons']):
+            break
         
     stdscr.clear()
     stdscr.addstr(2, 2, "GAME OVER")
     stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
     stdscr.addstr(4, 2, f"Final Score (Moves Survived): {game_data['player']['score']}")
     stdscr.refresh()
-    time.sleep(3)
+    time.sleep(6.7)
     
 
 curses.wrapper(main)
