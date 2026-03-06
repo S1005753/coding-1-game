@@ -215,7 +215,7 @@ def main(stdscr):
             move_player(key)
             move_dragons()
 
-            if any(game_data['player']["x"] == d["x"] and game_data['player']["y"] == d["y"] for d in game_data['dragons']):
+            if any(abs(game_data['player']["x"] - d["x"]) <= 1 and abs(game_data['player']["y"] - d["y"]) <= 1 for d in game_data['dragons']):
                 break
 
             draw_board(stdscr)
