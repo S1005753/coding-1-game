@@ -149,6 +149,7 @@ def draw_board(stdscr):
                   "Move with W/A/S/D, Q to quit",
                   curses.color_pair(0))
     stdscr.refresh()
+
 def move_player(key):
     x = game_data['player']['x']
     y = game_data['player']['y']
@@ -188,29 +189,47 @@ def move_dragons():
                     dragon['y'] = new_y
                     break
 
-display_welcome_screen()
-time.sleep(0.0)
+def play_game(stdscr):
+    curses.curs_set(0)
+    curses.start_color()
+    curses.use_default_colors()
+    
+    stdscr.nodelay(True)
+
+    draw_board(stdscr)
 
 def main(stdscr):
     curses.curs_set(0)  
     draw_board(stdscr)
 
     while True:
-        key = stdscr.getkey()
-        if key.lower() == "q":
-            break
-        move_player(key)
-        move_dragons()
-        draw_board(stdscr)
-        if any(game_data['player']["x"] == d["x"] and game_data['player']["y"] == d["y"] for d in game_data['dragons']):
-            break
-        
+        try:
+            key = stdscr.getkey()
+        except:
+            key = None
+
+        if key:
+            if key.lower() == "q":
+                break
+
+            moved = move_player(key)
+
+            if moved:
+                move_dragons()
+
+
+            if any(game_data['player']["x"] == d["x"] and game_data['player']["y"] == d["y"] for d in game_data['dragons']):
+                break
+
+            draw_board(stdscr)
+
     stdscr.clear()
     stdscr.addstr(2, 2, "GAME OVER")
     stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
     stdscr.addstr(4, 2, f"Final Score (Moves Survived): {game_data['player']['score']}")
     stdscr.refresh()
     time.sleep(6.7)
-    
 
+display_welcome_screen()
+time.sleep(0.0) 
 curses.wrapper(main)
