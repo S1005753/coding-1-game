@@ -9,12 +9,12 @@ game_data = {
     "width": 49,
     "height": 11,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
-    "dragon_pos": {"x": 43, "y": 8},    
-    "2dragon_pos": {"x": 7, "y": 2},    
-    "3dragon_pos": {"x": 20, "y": 8},
-    "4dragon_pos": {"x": 30, "y": 1},
-
-
+    'dragons': [
+        {"x": 43, "y": 8},    
+        {"x": 7, "y": 2},    
+        {"x": 20, "y": 8},
+        {"x": 30, "y": 1},
+    ],
     "princess": [
         {"x": 47, "y": 8, "collected": False},
     ],
@@ -105,6 +105,13 @@ game_data = {
     "princess_icon": "\U0001F478",
     "empty": "\U00002B1B",
 }
+def display_welcome_screen():
+    print(" ")
+    print("Welcome to Save The Princess!")
+    print(" ")
+    print("Use WSAD for movement")
+    print("Avoid the dragons")
+    print("Get your princess!")
 
 def draw_board(stdscr):
     curses.start_color()
@@ -177,7 +184,7 @@ def move_player(key):
     game_data["player"]["y"] = new_y
     game_data["player"]["score"] += 1
 
-def move_dragon():
+def move_dragons():
     directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
     random.shuffle(directions)
     ex, ey = game_data['dragon_pos']['x'], game_data['dragon_pos']['y']
@@ -230,6 +237,8 @@ def move_dragon4():
                 game_data['4dragon_pos']['y'] = new_y
                 break
 
+#display_welcome_screen()
+#time.sleep(0.0)
 
 def main(stdscr):
     curses.curs_set(0)  
@@ -245,5 +254,16 @@ def main(stdscr):
         move_dragon3()
         move_dragon4()
         draw_board(stdscr)
+        if (game_data['player']["x"] == game_data['dragon_pos']["x"] and
+            game_data['player']["y"] == game_data['dragon_pos']["y"]):
+             break
+        
+    stdscr.clear()
+    stdscr.addstr(2, 2, "GAME OVER")
+    stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
+    stdscr.addstr(4, 2, f"Final Score (Moves Survived): {game_data['player']['score']}")
+    stdscr.refresh()
+    time.sleep(3)
+    
 
 curses.wrapper(main)
