@@ -18,6 +18,7 @@ game_data = {
     "princess": [
         {"x": 47, "y": 8, "collected": False},
     ],
+    "game_won": False,
     "obstacles": [
         #Horizontal Wall
         {"x": 0, "y": 5},
@@ -215,14 +216,25 @@ def main(stdscr):
             move_player(key)
             move_dragons()
 
-            if any(abs(game_data['player']["x"] - d["x"]) <= 1 and abs(game_data['player']["y"] - d["y"]) <= 1 for d in game_data['dragons']):
+            # Check if player collects princess
+            for p in game_data["princess"]:
+                if game_data['player']["x"] == p["x"] and game_data['player']["y"] == p["y"] and not p["collected"]:
+                    p["collected"] = True
+                    game_data["game_won"] = True
+                    break
+
+            if game_data["game_won"] or any(abs(game_data['player']["x"] - d["x"]) <= 1 and abs(game_data['player']["y"] - d["y"]) <= 1 for d in game_data['dragons']):
                 break
 
             draw_board(stdscr)
 
     stdscr.clear()
-    stdscr.addstr(2, 2, "GAME OVER")
-    stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
+    if game_data["game_won"]:
+        stdscr.addstr(2, 2, "YOU WIN!")
+        stdscr.addstr(3, 2, "You saved Princess Plum!")
+    else:
+        stdscr.addstr(2, 2, "GAME OVER")
+        stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
     stdscr.addstr(4, 2, f"Final Score (Moves Survived): {game_data['player']['score']}")
     stdscr.refresh()
     time.sleep(6.7)
