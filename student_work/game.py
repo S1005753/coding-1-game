@@ -212,11 +212,8 @@ def main(stdscr):
             if key.lower() == "q":
                 break
 
-            moved = move_player(key)
-
-            if moved:
-                move_dragons()
-
+            move_player(key)
+            move_dragons()
 
             if any(game_data['player']["x"] == d["x"] and game_data['player']["y"] == d["y"] for d in game_data['dragons']):
                 break
