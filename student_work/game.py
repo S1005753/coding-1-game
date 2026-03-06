@@ -106,13 +106,6 @@ game_data = {
     "princess_icon": "\U0001F478",
     "empty": "\U00002B1B",
 }
-def display_welcome_screen():
-    print(" ")
-    print("Welcome to Save The Princess!")
-    print(" ")
-    print("Use WSAD for movement")
-    print("Avoid the dragons")
-    print("Get your princess!")
 
 def draw_board(stdscr):
     curses.start_color()
@@ -239,6 +232,4 @@ def main(stdscr):
     stdscr.refresh()
     time.sleep(6.7)
 
-display_welcome_screen()
-time.sleep(0.0) 
 curses.wrapper(main)
