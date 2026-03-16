@@ -177,5 +177,5 @@ def main(stdscr):
     time.sleep(6.7)
 
 display_welcome_screen()
-time.sleep(0.0) 
+time.sleep(3.0) 
 curses.wrapper(main)
