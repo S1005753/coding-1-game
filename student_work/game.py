@@ -47,9 +47,9 @@ def display_welcome_screen():
     print(" ")
     print("Welcome to Save The Princess!")
     print(" ")
-    print("Use WSAD for movement")
     print("Avoid the dragons")
     print("Get your princess!")
+    print("Try to get the lowest moves possible!")
 
 def draw_board(stdscr):
     curses.start_color()
