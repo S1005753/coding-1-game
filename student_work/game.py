@@ -10,10 +10,10 @@ game_data = {
     "height": 11,
     "player": {"x": 0, "y": 2, "score": 0, "health": 100},
     'dragons': [
-        {"x": 43, "y": 8},    
-        {"x": 7, "y": 2},    
-        {"x": 20, "y": 8},
-        {"x": 30, "y": 1},
+        {"x": 43, "y": 8}, #Bob   
+        {"x": 7, "y": 2},    #Rob
+        {"x": 20, "y": 8}, #Cob
+        {"x": 30, "y": 0}, #Tob
     ],
     "princess": [
         {"x": 47, "y": 8, "collected": False},
@@ -35,7 +35,7 @@ horizontal_walls = [{"x": x, "y": 5} for x in range(49) if x not in [8, 9, 10, 2
 obstacle_segments = [
     (7, range(6, 11)), (2, range(3, 5)), (6, range(0,2)),   (11, range(0, 5)), #Rob room
     (22, range(0, 5)),  (11, range(3,8)), (17, range(8,12)), (13, range(9, 10)),(14, range(9, 10)),(20, range(9, 10)),(21, range(9, 10)), (22, range(6, 8)), (26, range(6, 11)), #Cob room
-    (26, range(0, 1)),(26, range(2,3)), (30, range(2, 6)), (33, range( 2,3)),(34, range(0, 3)), #Tob room
+    (26, range(0, 1)),(26, range(2,3)), (30, range(1, 4)), (33, range( 2,3)),(34, range(0, 3)), #Tob room
     (35, range(6, 11)), (39, range(0, 5)), (39, range(8, 9)), (40, range(8, 9)), (41, range(8, 9)), (41, range(7,9)), (42, range(8, 9)), (41, range(9, 10)), (45, range(10,11)),( 45, range(8,9)),( 45, range(6,7)), #Bob room
 ]
 
