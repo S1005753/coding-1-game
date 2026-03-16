@@ -47,8 +47,8 @@ def display_welcome_screen():
     print(" ")
     print("Welcome to Save The Princess!")
     print(" ")
-    print("Avoid the dragons")
-    print("Get your princess!")
+    print("Avoid the Dragons")
+    print("Save Princess Plum!")
     print("Try to get the lowest moves possible!")
 
 def draw_board(stdscr):
