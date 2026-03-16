@@ -169,6 +169,8 @@ def main(stdscr):
     if game_data["game_won"]:
         stdscr.addstr(2, 2, "YOU WIN!")
         stdscr.addstr(3, 2, "YOU SAVED PRINCESS PLUM!")
+    elif key.lower() == "q":
+        stdscr.addstr(2, 2, "YOU GAVE UP!")
     else:
         stdscr.addstr(2, 2, "GAME OVER")
         stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
