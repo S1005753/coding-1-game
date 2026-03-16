@@ -60,6 +60,8 @@ def draw_board(stdscr):
     curses.init_pair(4, curses.COLOR_MAGENTA, curses.COLOR_MAGENTA)
     # color pair 5 for dragon - red foreground on black
     curses.init_pair(5, curses.COLOR_RED, curses.COLOR_RED)
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK) # Empty space
+    curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)  # Walls
     
     # Print the board and all game elements using curses
 
@@ -136,47 +138,79 @@ def play_game(stdscr):
 
     draw_board(stdscr)
 
+def reset_game():
+    global game_data
+    game_data["player"]["x"] = 0
+    game_data["player"]["y"] = 2
+    game_data["player"]["score"] = 0
+    game_data["game_won"] = False
+    
+    # Reset Princess
+    for p in game_data["princess"]:
+        p["collected"] = False
+        
+    # Reset Dragons to original positions
+    game_data["dragons"] = [
+        {"x": 43, "y": 8}, {"x": 7, "y": 2}, 
+        {"x": 20, "y": 8}, {"x": 30, "y": 0}
+    ]
+
 def main(stdscr):
-    curses.curs_set(0)  
-    draw_board(stdscr)
-
     while True:
-        try:
-            key = stdscr.getkey()
-        except:
-            key = None
+        reset_game()
+        curses.curs_set(0)  
+        draw_board(stdscr)
 
-        if key:
-            if key.lower() == "q":
-                break
+        while True:
+            try:
+                key = stdscr.getkey()
+            except:
+                key = None
 
-            move_player(key)
-            move_dragons()
-
-            # Check if player collects princess
-            for p in game_data["princess"]:
-                if game_data['player']["x"] == p["x"] and game_data['player']["y"] == p["y"] and not p["collected"]:
-                    p["collected"] = True
-                    game_data["game_won"] = True
+            if key:
+                if key.lower() == "q":
                     break
 
-            if game_data["game_won"] or any(abs(game_data['player']["x"] - d["x"]) <= 1 and abs(game_data['player']["y"] - d["y"]) <= 1 for d in game_data['dragons']):
-                break
+                move_player(key)
+                move_dragons()
 
-            draw_board(stdscr)
+            # Check if player collects princess
+                for p in game_data["princess"]:
+                    if game_data['player']["x"] == p["x"] and game_data['player']["y"] == p["y"] and not p["collected"]:
+                        p["collected"] = True
+                        game_data["game_won"] = True
+                        break
 
-    stdscr.clear()
-    if game_data["game_won"]:
-        stdscr.addstr(2, 2, "YOU WIN!")
-        stdscr.addstr(3, 2, "YOU SAVED PRINCESS PLUM!")
-    elif key.lower() == "q":
-        stdscr.addstr(2, 2, "YOU GAVE UP!")
-    else:
-        stdscr.addstr(2, 2, "GAME OVER")
-        stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
-    stdscr.addstr(4, 2, f"Final Score (Moves Taken): {game_data['player']['score']}")
-    stdscr.refresh()
-    time.sleep(61.7)
+                if game_data["game_won"] or any(abs(game_data['player']["x"] - d["x"]) <= 1 and abs(game_data['player']["y"] - d["y"]) <= 1 for d in game_data['dragons']):
+                    break
+
+                draw_board(stdscr)
+
+        stdscr.clear()
+        if game_data["game_won"]:
+            stdscr.addstr(2, 2, "YOU WIN!")
+            stdscr.addstr(3, 2, "YOU SAVED PRINCESS PLUM!")
+        elif key.lower() == "q":
+            stdscr.addstr(2, 2, "YOU GAVE UP!")
+        else:
+            stdscr.addstr(2, 2, "GAME OVER")
+            stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
+
+        stdscr.addstr(4, 2, f"Final Score (Moves Taken): {game_data['player']['score']}")
+        stdscr.addstr(6, 2, "Play again? (Y/N)")
+        stdscr.refresh()
+
+        stdscr.nodelay(False)
+        while True:
+            choice = stdscr.getkey().lower()
+            if choice == 'y':
+                break # This breaks the CHOICE loop and restarts the PLAY AGAIN loop
+            elif choice == 'n' or choice == 'q':
+                stdscr.clear()
+                stdscr.addstr(2, 2, "Goodbye! Thanks for playing!")
+                stdscr.refresh() # You MUST refresh to show the text
+                time.sleep(2.0)  # Wait so they can actually read it
+                return  
 
 display_welcome_screen()
 time.sleep(3.0) 
