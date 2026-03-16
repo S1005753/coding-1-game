@@ -20,83 +20,6 @@ game_data = {
     ],
     "game_won": False,
     "obstacles": [
-        #Horizontal Wall
-        {"x": 0, "y": 5},
-        {"x": 1, "y": 5},
-        {"x": 2, "y": 5},
-        {"x": 3, "y": 5},
-        {"x": 4, "y": 5}, 
-        {"x": 5, "y": 5}, 
-        {"x": 6, "y": 5},
-        {"x": 7, "y": 5},
-        {"x": 8, "y": 5},
-        {"x": 9, "y": 5},
-        {"x": 13, "y": 5},
-        {"x": 14, "y": 5},
-        {"x": 15, "y": 5},
-        {"x": 16, "y": 5},
-        {"x": 17, "y": 5},
-        {"x": 18, "y": 5},
-        {"x": 19, "y": 5},
-        {"x": 20, "y": 5},
-        {"x": 21, "y": 5},
-        {"x": 22, "y": 5},
-        {"x": 26, "y": 5},
-        {"x": 27, "y": 5},
-        {"x": 28, "y": 5},
-        {"x": 29, "y": 5},
-        {"x": 30, "y": 5},
-        {"x": 31, "y": 5},
-        {"x": 32, "y": 5},
-        {"x": 33, "y": 5},
-        {"x": 34, "y": 5},
-        {"x": 35, "y": 5},
-        {"x": 39, "y": 5},
-        {"x": 40, "y": 5},
-        {"x": 41, "y": 5},
-        {"x": 42, "y": 5},
-        {"x": 43, "y": 5},
-        {"x": 44, "y": 5},
-        {"x": 45, "y": 5},
-        {"x": 46, "y": 5},
-        {"x": 47, "y": 5},
-        {"x": 48, "y": 5},
-        #Vertical Walls
-        {"x": 9, "y": 6},
-        {"x": 9, "y": 7},
-        {"x": 9, "y": 8},
-        {"x": 9, "y": 9},
-        {"x": 9, "y": 10},
-
-        {"x": 13, "y": 4}, 
-        {"x": 13, "y": 3},
-        {"x": 13, "y": 2},
-        {"x": 13, "y": 1},
-        {"x": 13, "y": 0},
-
-        {"x": 22, "y": 4}, 
-        {"x": 22, "y": 3},
-        {"x": 22, "y": 2},
-        {"x": 22, "y": 1},
-        {"x": 22, "y": 0},
-
-        {"x": 26, "y": 6}, 
-        {"x": 26, "y": 7},
-        {"x": 26, "y": 8},
-        {"x": 26, "y": 9},
-        {"x": 26, "y": 10},
-
-        {"x": 35, "y": 6}, 
-        {"x": 35, "y": 7},
-        {"x": 35, "y": 8},
-        {"x": 35, "y": 9},
-        {"x": 35, "y": 10},
-
-        {"x": 39, "y": 4}, 
-        {"x": 39, "y": 3},
-        {"x": 39, "y": 2},
-        {"x": 39, "y": 1},
-        {"x": 39, "y": 0},
 ],
 
     # Sticker Icons
@@ -106,6 +29,20 @@ game_data = {
     "princess_icon": "\U0001F478",
     "empty": "\U00002B1B",
 }
+#Place a brick in every section from 0 to 49 except for the numbers listed at the end
+horizontal_walls = [{"x": x, "y": 5} for x in range(49) if x not in [8, 9, 10, 23, 24, 25, 36, 37, 38]]
+
+obstacle_segments = [
+    (7, range(6, 11)), (2, range(3, 5)), (6, range(0,2)),   (11, range(0, 5)), #Rob room
+    (22, range(0, 5)),  (11, range(3,8)), (17, range(8,12)), (13, range(9, 10)),(14, range(9, 10)),(20, range(9, 10)),(21, range(9, 10)), (22, range(6, 8)), (26, range(6, 11)), #Cob room
+    (26, range(0, 1)),(26, range(2,3)), (30, range(2, 6)), (33, range( 2,3)),(34, range(0, 3)), #Tob room
+    (35, range(6, 11)), (39, range(0, 5)), (39, range(8, 9)), (40, range(8, 9)), (41, range(8, 9)), (41, range(7,9)), (42, range(8, 9)), (41, range(9, 10)), (45, range(10,11)),( 45, range(8,9)),( 45, range(6,7)), #Bob room
+]
+
+vertical_walls = [{"x": x, "y": y} for x, y_range in obstacle_segments for y in y_range]
+
+game_data["obstacles"] = horizontal_walls + vertical_walls
+
 def display_welcome_screen():
     print(" ")
     print("Welcome to Save The Princess!")
@@ -235,10 +172,10 @@ def main(stdscr):
     else:
         stdscr.addstr(2, 2, "GAME OVER")
         stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
-    stdscr.addstr(4, 2, f"Final Score (Moves Survived): {game_data['player']['score']}")
+    stdscr.addstr(4, 2, f"Final Score (Moves Taken): {game_data['player']['score']}")
     stdscr.refresh()
     time.sleep(6.7)
 
 display_welcome_screen()
-time.sleep(3.0) 
+time.sleep(0.0) 
 curses.wrapper(main)
