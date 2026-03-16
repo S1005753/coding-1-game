@@ -174,7 +174,7 @@ def main(stdscr):
         stdscr.addstr(3, 2, "YOU GOT HIT BY A DRAGON!")
     stdscr.addstr(4, 2, f"Final Score (Moves Taken): {game_data['player']['score']}")
     stdscr.refresh()
-    time.sleep(6.7)
+    time.sleep(61.7)
 
 display_welcome_screen()
 time.sleep(3.0) 
