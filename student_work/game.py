@@ -208,8 +208,8 @@ def main(stdscr):
             elif choice == 'n' or choice == 'q':
                 stdscr.clear()
                 stdscr.addstr(2, 2, "Goodbye! Thanks for playing!")
-                stdscr.refresh() # You MUST refresh to show the text
-                time.sleep(2.0)  # Wait so they can actually read it
+                stdscr.refresh() 
+                time.sleep(2.0)  
                 return  
 
 display_welcome_screen()
